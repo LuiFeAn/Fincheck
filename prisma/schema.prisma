@@ -79,7 +79,6 @@ model Transaction {
   value Float
   date DateTime
   type TransactionType
-  
   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)

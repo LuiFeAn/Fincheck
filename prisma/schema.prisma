@@ -9,3 +9,79 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+
+model User {
+
+    @@map("users")
+    id String @id @db.Uuid @default(uuid())
+    name String
+    email String @unique
+    password String
+    bankAccounts BankAccount []
+    categories Category []
+    transactions Transaction []
+
+}
+
+enum BankAccountType {
+
+  @@map("bank_account_type")
+  CHECKING
+  INVESTIMENT 
+  CASH
+
+}
+
+model BankAccount {
+
+   @@map("bank_accounts")
+   id String @id @db.Uuid @default(uuid())
+   userId String @db.Uuid @map("user_id")
+   name String
+   initialBalance Float @map("initial_balance")
+   type BankAccountType 
+   color String
+   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+   transactions Transaction []
+
+}
+
+enum TransactionType {
+
+  @@map("transaction_type")
+  INCOME
+  EXPENSE
+
+}
+
+model Category {
+
+   @@map("categories")
+   id String @id @db.Uuid @default(uuid())
+   userId String @db.Uuid
+   name String
+   icon String
+   type TransactionType
+   user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+   transactions Transaction []
+
+}
+
+model Transaction {
+
+  @@map("transactions")
+  id String @id @db.Uuid @default(uuid())
+  userId String @db.Uuid @map("user_id")
+  bankAccountId String @db.Uuid @map("bank_account_id")
+  categoryId String? @db.Uuid @map("categorie_id")
+  name String
+  value Float
+  date DateTime
+  type TransactionType
+  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  bankAccount BankAccount @relation(fields: [bankAccountId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+}

@@ -13,15 +13,18 @@ export class UsersRepository {
 
     }
 
+    findUnique(options: Prisma.UserFindUniqueArgs){
+
+        return this.prismaService.user.findUnique(options);
+
+    }
+
     findByEmail(email: string){
 
         return this.prismaService.user.findUnique({
             where:{
                 email,
             },
-            select:{
-                id:true
-            }
         })
 
     }
